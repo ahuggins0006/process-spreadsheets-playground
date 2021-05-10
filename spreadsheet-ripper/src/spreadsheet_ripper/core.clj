@@ -35,23 +35,25 @@ matrix-sheet-row-count;; => 8761
 
 ;; get data out of Matrix sheet
 
+(defn combine-ref-with-value [cell]
+  [(spr/cell-reference cell) (spr/read-cell cell)])
 (def matrix-sheet-cell-data
    (->> workbook
      (spr/select-sheet "Matrix")
      spr/row-seq
      (remove nil?)
      (map spr/cell-seq)
-     (map #(map spr/read-cell %))))
+     (map #(map combine-ref-with-value  %))))
 
-(take 6  matrix-sheet-cell-data)
+(nth matrix-sheet-cell-data 6)
 
-(def matrix-sheet-row-data
-   (->> workbook
-     (spr/select-sheet "Matrix")
-     spr/row-seq
-     (map spr/row-vec)))
+(def col-FP (spr/select-columns {:K :FP} (spr/select-sheet "Matrix" workbook)))
 
-(first matrix-sheet-row-data)
+(def indexed-col-values (map-indexed vector col-FP))
+
+(def only-A (filter #(= {:FP "A"} (second  %)) indexed-col-values))
+
+(nth matrix-sheet-cell-data 8)
 
 (keys (ns-publics 'dk.ative.docjure.spreadsheet))
 ;; => (select-columns
