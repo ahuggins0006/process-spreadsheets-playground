@@ -53,7 +53,18 @@ matrix-sheet-row-count;; => 8761
 
 (def only-A (filter #(= {:FP "A"} (second  %)) indexed-col-values))
 
+
 (nth matrix-sheet-cell-data 8)
+
+;; User requests that certain columns be hidden/removed
+
+;; select columns
+
+(spr/select-columns {:K :FP :L :CR} (spr/select-sheet "Matrix" workbook))
+
+
+
+
 
 (keys (ns-publics 'dk.ative.docjure.spreadsheet))
 ;; => (select-columns
@@ -107,6 +118,7 @@ matrix-sheet-row-count;; => 8761
 ;;     create-font!
 ;;     add-sheet!
 ;;     vert-align)
+
 #_(defn -main
   "I don't do a whole lot ... yet."
   [& args]
