@@ -5,6 +5,7 @@
             :url "https://www.eclipse.org/legal/epl-2.0/"}
   :dependencies [[org.clojure/clojure "1.10.1"]
                  [dk.ative/docjure "1.14.0"]
+                 [table "0.5.0"]
                  ]
   :main ^:skip-aot spreadsheet-ripper.core
   :target-path "target/%s"

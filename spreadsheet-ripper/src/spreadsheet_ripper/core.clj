@@ -1,12 +1,22 @@
 (ns spreadsheet-ripper.core
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
+            [clojure.pprint :as pprint]
+            [table.core :as t]
             [dk.ative.docjure.spreadsheet :as spr])
   (:gen-class))
 
 (defn get-workbook [file-path] (spr/load-workbook file-path))
 
 (def workbook (get-workbook "resources/sample.xlsx"))
+
+(def workbook2 (get-workbook "resources/agu_messages.xlsx"))
+
+(filter #(str/includes? % "write" ) (->> workbook2
+     spr/sheet-seq
+     (map spr/sheet-name)
+     ))
+
 
 (def sheet-names (->> workbook
                       spr/sheet-seq
@@ -47,11 +57,18 @@ matrix-sheet-row-count;; => 8761
 
 (nth matrix-sheet-cell-data 6)
 
-(def col-FP (spr/select-columns {:K :FP} (spr/select-sheet "Matrix" workbook)))
+(def col-FP (spr/select-columns {:C :title} (spr/select-sheet "Matrix" workbook)))
 
 (def indexed-col-values (map-indexed vector col-FP))
 
+(def find-target (filter #(= {"title" "Covenant Against Contingent Fees"} (second  %)) indexed-col-values))
+
 (def only-A (filter #(= {:FP "A"} (second  %)) indexed-col-values))
+
+(nth indexed-col-values 9)
+;; => [9 {"title" "Covenant Against Contingent Fees"}]
+
+(first indexed-col-values)
 
 
 (nth matrix-sheet-cell-data 8)
@@ -60,7 +77,24 @@ matrix-sheet-row-count;; => 8761
 
 ;; select columns
 
-(spr/select-columns {:K :FP :L :CR} (spr/select-sheet "Matrix" workbook))
+(def sample-data (spr/select-columns {:K :FP :L :CR} (spr/select-sheet "Matrix" workbook)))
+(def sample-3 (take 3 sample-data))
+;; => ({:FP nil, :CR nil} {:FP nil, :CR nil} {:FP "CONTRACT \nTYPE", :CR nil})
+
+;; remove empty rows
+(def sample-3-no-nil (map #(into {} (filter (comp some? val) %)) sample-3))
+
+sample-3-no-nil
+;; remove empty maps
+(def no-empty (remove empty? sample-3-no-nil))
+
+
+(pprint/print-table no-empty)
+
+(t/table no-empty :stype :unicode)
+
+
+
 
 
 
