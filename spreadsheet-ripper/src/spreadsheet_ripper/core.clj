@@ -6,6 +6,12 @@
             [dk.ative.docjure.spreadsheet :as spr])
   (:gen-class))
 
+;; TODO model data as contracts with attributes
+;; TODO user wants to be able form queries about contracts based on their attributes
+;; Import data into a database such as dataomic that uses a query language like datalog
+;; What is datalog? https://www.youtube.com/watch?v=aI0zVzzoK_E
+
+
 (defn get-workbook [file-path] (spr/load-workbook file-path))
 
 (def workbook (get-workbook "resources/sample.xlsx"))
@@ -47,6 +53,7 @@ matrix-sheet-row-count;; => 8761
 
 (defn combine-ref-with-value [cell]
   [(spr/cell-reference cell) (spr/read-cell cell)])
+
 (def matrix-sheet-cell-data
    (->> workbook
      (spr/select-sheet "Matrix")
