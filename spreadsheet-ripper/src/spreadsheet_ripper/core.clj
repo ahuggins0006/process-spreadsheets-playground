@@ -6,7 +6,7 @@
             [dk.ative.docjure.spreadsheet :as spr])
   (:gen-class))
 
-;; TODO model data as contracts with attributes
+;; TODO model data as FAR clauses with attributes
 ;; TODO user wants to be able form queries about contracts based on their attributes
 ;; Import data into a database such as dataomic that uses a query language like datalog
 ;; What is datalog? https://www.youtube.com/watch?v=aI0zVzzoK_E
@@ -16,9 +16,8 @@
 
 (def workbook (get-workbook "resources/sample.xlsx"))
 
-(def workbook2 (get-workbook "resources/agu_messages.xlsx"))
 
-(filter #(str/includes? % "write" ) (->> workbook2
+(filter #(str/includes? % "write" ) (->> workbook
      spr/sheet-seq
      (map spr/sheet-name)
      ))
