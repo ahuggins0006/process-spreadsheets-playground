@@ -75,36 +75,26 @@
 
 
 (d/transact! conn matrix-datoms)
-;; => #datascript.db.TxReport{:db-before #datascript/DB {:schema nil, :datoms [[1 :<=$250K "" 536870914] [1 :A-E "A" 536870914] [1 :Applicable_to_SSC_Pacific "Y" 536870914] [1 :COM
-SVC "A" 536870914] [1 :COMSVC "A" 536870923] [1 :COM_SUBK "" 536870914] [1 :CON "A" 536870914] [1 :CR "A" 536870914] [1 :DDR "A" 536870914] [1 :Date "JUN 2020" 536870914] [1 :FP "A" 536870914] [1 :IBR "Yes" 536870914] [1 :Include? "" 536870914] [1 :LMV "A" 536870914] [1 :Located_at_
-48_CFR "52.202-1" 536870916] [1 :Located_at_
-48_CFR: "52.202-1" 536870914] [1 :Located_at_48_CFR "52.202-1" 536870923] [1 :NCOM_SUBK "" 536870914] [1 :NEG
-CON "A" 536870914] [1 :NEGCON "A" 536870923] [1 :P_or_C "C" 536870914] [1 :Prescribed_at_
-48_CFR "2.201" 536870916] [1 :Prescribed_at_
-48_CFR: "2.201" 536870914] [1 :Prescribed_at_48_CFR "2.201" 536870923] [1 :Prescription "Insert the clause at 52.202-1, Definitions, in solicitations and contracts that exceed the simplified acquisition threshold." 536870914] [1 :R&D "A" 536870914] [1 :Regulation_ "FAR" 536870914] [1 :SAP "" 536870914] [1 :SLD
-BID "A" 536870914] [1 :SLDBID "A" 536870923] [1 :SUP "" 536870914] [1 :SVC "" 536870914] [1 :T&M
-LH "A" 536870914] [1 :T&MLH "A" 536870923] [1 :TRN "A" 536870914] [1 :Title "Definitions" 536870914] [1 :UCF "I" 536870914] [1 :USACE_CSI "00 72 00" 536870914] [1 :UTL
-SVC "A" 536870914] [1 :UTLSVC "A" 536870923] [1 :age 30 536870913] [1 :name "Bob" 536870913] [1 :Applicable_on_GSA/NASA_SEWP_Orders_issued_by_SSC_Pacific "N" 536870923] [1 :Applicable_on_GSA/NASA_SEWP_Orders_issued_by_SSC_Pacific
- "N" 536870914] [2 :age 15 536870913] [2 :name "Sally" 536870913]]}, :db-after #datascript/DB {:schema nil, :datoms [[1 :<=$250K "" 536870914] [1 :A-E "A" 536870914] [1 :Applicable_to_SSC_Pacific "Y" 536870914] [1 :COM
-SVC "A" 536870914] [1 :COMSVC "A" 536870923] [1 :COM_SUBK "" 536870914] [1 :CON "A" 536870914] [1 :CR "A" 536870914] [1 :DDR "A" 536870914] [1 :Date "JUN 2020" 536870914] [1 :FP "A" 536870914] [1 :IBR "Yes" 536870914] [1 :Include? "" 536870914] [1 :LMV "A" 536870914] [1 :Located_at_
-48_CFR "52.202-1" 536870916] [1 :Located_at_
-48_CFR: "52.202-1" 536870914] [1 :Located_at_48_CFR "52.202-1" 536870923] [1 :NCOM_SUBK "" 536870914] [1 :NEG
-CON "A" 536870914] [1 :NEGCON "A" 536870923] [1 :P_or_C "C" 536870914] [1 :Prescribed_at_
-48_CFR "2.201" 536870916] [1 :Prescribed_at_
-48_CFR: "2.201" 536870914] [1 :Prescribed_at_48_CFR "2.201" 536870923] [1 :Prescription "Insert the clause at 52.202-1, Definitions, in solicitations and contracts that exceed the simplified acquisition threshold." 536870914] [1 :R&D "A" 536870914] [1 :Regulation_ "FAR" 536870914] [1 :SAP "" 536870914] [1 :SLD
-BID "A" 536870914] [1 :SLDBID "A" 536870923] [1 :SUP "" 536870914] [1 :SVC "" 536870914] [1 :T&M
-LH "A" 536870914] [1 :T&MLH "A" 536870923] [1 :TRN "A" 536870914] [1 :Title "Definitions" 536870914] [1 :UCF "I" 536870914] [1 :USACE_CSI "00 72 00" 536870914] [1 :UTL
-SVC "A" 536870914] [1 :UTLSVC "A" 536870923] [1 :age 30 536870913] [1 :name "Bob" 536870913] [1 :Applicable_on_GSA/NASA_SEWP_Orders_issued_by_SSC_Pacific "N" 536870923] [1 :Applicable_on_GSA/NASA_SEWP_Orders_issued_by_SSC_Pacific
- "N" 536870914] [2 :age 15 536870913] [2 :name "Sally" 536870913]]}, :tx-data [], :tempids #:db{:current-tx 536870925}, :tx-meta nil}
 
 ;;build a sample query
 (def q-ibr '[
-:find [?f ?n]
+:find [?f ?n ?h]
 :where
-[?e :Located_at_48_CFR ?n]
+             [?e :CR ?n]
+             [?e :T&MLH ?h]
 [?e :FP ?f]])
 
 (d/q q-ibr @conn)
 
+(def q-attr '[
+             :find ?e
+             :where
+             [?e :FP]
+             ])
 
-;; build more realistic query
+;;return all attrs associated with query
+(def eid (d/q q-attr @conn))
+
+(def ent (d/entity @conn (ffirst eid)))
+
+(seq ent)
