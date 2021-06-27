@@ -72,9 +72,12 @@
 (def row-1 (first (csv-data->maps (drop 4 matrix-data))))
 
 (def matrix-datoms  [(assoc row-1 :db/id 1)])
+;; all relevant rows
+(def rows (csv-data->maps (drop 4 matrix-data)))
+;; assign unique ids to each row
+(def matrix-datoms-all-rows (for [r rows] (assoc r :db/id (str (gensym))) ))
 
-
-(d/transact! conn matrix-datoms)
+(d/transact! conn matrix-datoms-all-rows)
 
 ;;build a sample query
 (def q-ibr '[
@@ -98,3 +101,4 @@
 (def ent (d/entity @conn (ffirst eid)))
 
 (seq ent)
+(->> (seq ent) count)
